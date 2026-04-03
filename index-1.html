@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ifaseun — Oráculo de Ifá</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A227;
+  --gold-light: #E6C068;
+  --gold-bright: #FFD97D;
+  --black: #020100;
+  --dark: #0D0800;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--gold-light);
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+}
+
+/* CURSOR PERSONALIZADO */
+body { cursor: none; }
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--gold-bright);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s;
+  box-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(230,192,104,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.15s ease;
+}
+
+#particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+section { position: relative; z-index: 1; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,162,39,0.12) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse-glow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 860px; }
+
+/* SÍMBOLO ANIMADO */
+.odu-symbol {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 32px;
+  animation: fadeUp 1s ease both;
+}
+
+.odu-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.odu-line {
+  font-size: 28px;
+  color: var(--gold-bright);
+  text-shadow: 0 0 15px rgba(255,217,125,0.8), 0 0 30px rgba(201,162,39,0.5);
+  animation: lineFadeIn 0.5s ease both;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 4px;
+}
+
+.odu-line:nth-child(1) { animation-delay: 0.2s; }
+.odu-line:nth-child(2) { animation-delay: 0.4s; }
+.odu-line:nth-child(3) { animation-delay: 0.6s; }
+.odu-line:nth-child(4) { animation-delay: 0.8s; }
+
+@keyframes lineFadeIn {
+  from { opacity: 0; transform: scaleX(0); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.ornament-line {
+  width: 100px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-bright));
+  opacity: 0.7;
+  box-shadow: 0 0 8px rgba(201,162,39,0.4);
+}
+.ornament-line.right { background: linear-gradient(to left, transparent, var(--gold-bright)); }
+.ornament span { color: var(--gold-bright); font-size: 16px; text-shadow: 0 0 10px var(--gold); }
+
+.icon-hero {
+  width: 150px; height: 150px;
+  border-radius: 32px;
+  margin: 0 auto 36px;
+  box-shadow: 0 0 40px rgba(201,162,39,0.5), 0 0 80px rgba(201,162,39,0.2), 0 0 0 1px rgba(201,162,39,0.3);
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(1deg); }
+}
+
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(48px, 9vw, 96px);
+  font-weight: 900;
+  letter-spacing: 16px;
+  background: linear-gradient(135deg, #C9A227, #FFD97D, #E6C068, #8C6B1F, #FFD97D);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s ease infinite, fadeUp 1s ease 0.3s both;
+  margin-bottom: 10px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 2.5vw, 20px);
+  letter-spacing: 8px;
+  color: rgba(230,192,104,0.7);
+  margin-bottom: 36px;
+  animation: fadeUp 1s ease 0.5s both;
+  text-shadow: 0 0 20px rgba(201,162,39,0.3);
+}
+
+.hero-tagline {
+  font-size: clamp(20px, 3.5vw, 30px);
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 52px;
+  animation: fadeUp 1s ease 0.7s both;
+}
+
+.hero-tagline em {
+  font-style: italic;
+  color: rgba(255,217,125,0.7);
+}
+
+.hero-tagline strong {
+  font-weight: 700;
+  color: var(--gold-bright);
+  text-shadow: 0 0 20px rgba(255,217,125,0.5);
+  font-style: normal;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeUp 1s ease 0.9s both;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #8C6B1F, #C9A227, #FFD97D, #C9A227, #8C6B1F);
+  background-size: 300% 300%;
+  animation: shimmer 3s ease infinite;
+  color: #050300;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  padding: 20px 48px;
+  border-radius: 50px;
+  text-decoration: none;
+  border: none;
+  cursor: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 30px rgba(201,162,39,0.5), 0 0 60px rgba(201,162,39,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: sweep 3s ease infinite;
+}
+
+@keyframes sweep {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 50px rgba(201,162,39,0.7), 0 0 80px rgba(201,162,39,0.3);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  padding: 20px 40px;
+  border-radius: 50px;
+  text-decoration: none;
+  border: 1px solid rgba(201,162,39,0.5);
+  cursor: none;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 20px rgba(201,162,39,0.05);
+}
+
+.btn-secondary:hover {
+  border-color: var(--gold-bright);
+  background: rgba(201,162,39,0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 0 30px rgba(201,162,39,0.2), inset 0 0 20px rgba(201,162,39,0.1);
+  color: var(--gold-bright);
+}
+
+.hero-badge {
+  margin-top: 36px;
+  font-size: 13px;
+  color: rgba(230,192,104,0.5);
+  letter-spacing: 3px;
+  animation: fadeUp 1s ease 1.1s both;
+}
+
+.glow-line {
+  width: 100%; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201,162,39,0.3), transparent);
+  box-shadow: 0 0 10px rgba(201,162,39,0.1);
+}
+
+/* STATS */
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 60px 20px;
+  flex-wrap: wrap;
+  background: linear-gradient(to bottom, rgba(201,162,39,0.03), transparent);
+}
+
+.stat { text-align: center; }
+
+.stat-number {
+  font-family: 'Cinzel', serif;
+  font-size: 42px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #C9A227, #FFD97D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+  text-shadow: none;
+}
+
+.stat-label {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: rgba(230,192,104,0.5);
+  text-transform: uppercase;
+}
+
+/* FEATURES */
+.features {
+  padding: 100px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-header { text-align: center; margin-bottom: 70px; }
+
+.section-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 4vw, 46px);
+  color: var(--gold-bright);
+  margin-bottom: 16px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 30px rgba(255,217,125,0.3);
+}
+
+.section-sub {
+  font-size: 20px;
+  font-style: italic;
+  color: rgba(230,192,104,0.55);
+  letter-spacing: 1px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  background: linear-gradient(135deg, rgba(201,162,39,0.07), rgba(201,162,39,0.02));
+  border: 1px solid rgba(201,162,39,0.12);
+  border-radius: 24px;
+  padding: 40px 32px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201,162,39,0.5), transparent);
+}
+
+.feature-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(201,162,39,0.05), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.feature-card:hover {
+  border-color: rgba(201,162,39,0.4);
+  box-shadow: 0 20px 60px rgba(201,162,39,0.12), 0 0 0 1px rgba(201,162,39,0.1);
+  transform: translateY(-8px) !important;
+}
+
+.feature-card:hover::after { opacity: 1; }
+
+.feature-icon {
+  font-size: 44px;
+  margin-bottom: 22px;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(201,162,39,0.4));
+}
+
+.feature-title {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--gold-bright);
+  margin-bottom: 14px;
+  text-shadow: 0 0 15px rgba(255,217,125,0.3);
+}
+
+.feature-desc {
+  font-size: 17px;
+  line-height: 1.8;
+  color: rgba(230,192,104,0.6);
+  font-weight: 300;
+}
+
+/* SCREENSHOTS */
+.screenshots { padding: 80px 20px; }
+
+.screenshots-inner { max-width: 1100px; margin: 0 auto; }
+
+.screens-row {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 20px 0 10px;
+}
+
+.screen-wrap {
+  flex-shrink: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(201,162,39,0.2);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 40px rgba(201,162,39,0.08), 0 0 0 1px rgba(201,162,39,0.05);
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.screen-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, transparent, rgba(201,162,39,0.5), transparent);
+  z-index: 2;
+}
+
+.screen-wrap:hover {
+  transform: translateY(-14px) scale(1.03);
+  border-color: rgba(201,162,39,0.45);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 60px rgba(201,162,39,0.15);
+}
+
+.screen-wrap img { display: block; width: 190px; height: auto; }
+
+/* PRICING */
+.pricing {
+  padding: 100px 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.price-card {
+  background: linear-gradient(135deg, rgba(201,162,39,0.1), rgba(201,162,39,0.03), rgba(201,162,39,0.08));
+  border: 1px solid rgba(201,162,39,0.35);
+  border-radius: 32px;
+  padding: 60px 48px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(201,162,39,0.08), inset 0 0 60px rgba(201,162,39,0.03);
+}
+
+.price-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold-bright), transparent);
+  box-shadow: 0 0 20px var(--gold);
+}
+
+.price-card::after {
+  content: '';
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,162,39,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.price-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(201,162,39,0.2), rgba(201,162,39,0.1));
+  border: 1px solid rgba(201,162,39,0.4);
+  border-radius: 50px;
+  padding: 8px 24px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold-bright);
+  margin-bottom: 28px;
+  text-shadow: 0 0 10px rgba(255,217,125,0.3);
+}
+
+.price-trial {
+  font-size: 20px;
+  color: rgba(230,192,104,0.65);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.price-amount {
+  font-family: 'Cinzel', serif;
+  font-size: 72px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #C9A227, #FFD97D, #E6C068);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+  line-height: 1;
+  filter: drop-shadow(0 0 20px rgba(201,162,39,0.4));
+}
+
+.price-period {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: rgba(230,192,104,0.4);
+  margin-bottom: 44px;
+  letter-spacing: 4px;
+}
+
+.price-list { list-style: none; text-align: left; margin-bottom: 48px; }
+
+.price-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  font-size: 18px;
+  color: rgba(230,192,104,0.8);
+  border-bottom: 1px solid rgba(201,162,39,0.07);
+}
+
+.price-list li:last-child { border: none; }
+
+.price-list li::before {
+  content: '✦';
+  color: var(--gold-bright);
+  font-size: 10px;
+  flex-shrink: 0;
+  text-shadow: 0 0 8px var(--gold);
+}
+
+/* FOOTER */
+footer {
+  padding: 70px 20px 50px;
+  text-align: center;
+  border-top: 1px solid rgba(201,162,39,0.08);
+  position: relative;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  box-shadow: 0 0 10px var(--gold);
+}
+
+.footer-symbol {
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  text-shadow: 0 0 20px rgba(201,162,39,0.5);
+  display: block;
+}
+
+.footer-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  letter-spacing: 10px;
+  background: linear-gradient(135deg, #C9A227, #FFD97D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.footer-sub {
+  font-size: 13px;
+  color: rgba(230,192,104,0.3);
+  letter-spacing: 4px;
+  margin-bottom: 36px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+
+.footer-links a {
+  color: rgba(230,192,104,0.4);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 2px;
+  transition: all 0.3s;
+}
+
+.footer-links a:hover {
+  color: var(--gold-bright);
+  text-shadow: 0 0 10px rgba(255,217,125,0.4);
+}
+
+.footer-copy { font-size: 12px; color: rgba(230,192,104,0.2); letter-spacing: 1px; }
+
+@media (max-width: 600px) {
+  .hero-cta { flex-direction: column; align-items: center; }
+  .price-amount { font-size: 56px; }
+  .price-card { padding: 44px 28px; }
+  .stats { gap: 32px; }
+  body { cursor: auto; }
+  .cursor, .cursor-ring { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<canvas id="particles"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-content">
+
+    <div class="odu-symbol">
+      <div class="odu-col">
+        <span class="odu-line">I</span>
+        <span class="odu-line">I</span>
+        <span class="odu-line">I</span>
+        <span class="odu-line">I</span>
+      </div>
+      <div class="odu-col">
+        <span class="odu-line">I</span>
+        <span class="odu-line">I</span>
+        <span class="odu-line">I</span>
+        <span class="odu-line">I</span>
+      </div>
+    </div>
+
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <span>✦ ❖ ✦</span>
+      <div class="ornament-line right"></div>
+    </div>
+
+    <img src="icon.png" alt="Ifaseun" class="icon-hero" onerror="this.style.display='none'">
+
+    <h1 class="hero-title">IFASEUN</h1>
+    <p class="hero-subtitle">Oráculo de Ifá</p>
+
+    <p class="hero-tagline">
+      Os <strong>256 Odùs de Ifá</strong> na palma da sua mão.<br>
+      <em>Conhecimento ancestral para quem caminha na tradição Yorùbá.</em>
+    </p>
+
+    <div class="hero-cta">
+      <a href="#download" class="btn-primary">⬇ &nbsp; Baixar Grátis na Play Store</a>
+      <a href="#funcionalidades" class="btn-secondary">Ver funcionalidades</a>
+    </div>
+
+    <p class="hero-badge">✦ &nbsp; 16 dias grátis · Sem cartão necessário &nbsp; ✦</p>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <span class="stat-number">256</span>
+    <span class="stat-label">Odùs Completos</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">16</span>
+    <span class="stat-label">Dias Grátis</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">∞</span>
+    <span class="stat-label">Consultas</span>
+  </div>
+</div>
+
+<div class="glow-line"></div>
+
+<!-- FEATURES -->
+<section class="features" id="funcionalidades">
+  <div class="section-header">
+    <p class="section-eyebrow">✦ FUNCIONALIDADES ✦</p>
+    <h2 class="section-title">Tudo que um iniciado precisa</h2>
+    <p class="section-sub">Em um único app, elegante e completo</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📖</span>
+      <h3 class="feature-title">256 Odùs Completos</h3>
+      <p class="feature-desc">Todos os Odùs Méji e Omo Odùs com símbolos, significados, Iré, Ibi e direcionamentos ancestrais.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">✨</span>
+      <h3 class="feature-title">Odù do Dia</h3>
+      <p class="feature-desc">Receba diariamente um Odù revelado pelo oráculo. Uma mensagem ancestral para guiar o seu dia.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⚡</span>
+      <h3 class="feature-title">Simulador de Consulta</h3>
+      <p class="feature-desc">Simule uma consulta ao estilo tradicional de Ifá. Selecione os Odùs e revele a combinação.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎓</span>
+      <h3 class="feature-title">Modo Treino</h3>
+      <p class="feature-desc">Memorize os Odùs de forma eficiente. Ideal para iniciados que estão aprofundando seus estudos.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌟</span>
+      <h3 class="feature-title">Favoritos</h3>
+      <p class="feature-desc">Salve os Odùs mais importantes e acesse rapidamente quando precisar durante uma consulta.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📜</span>
+      <h3 class="feature-title">Histórico Completo</h3>
+      <p class="feature-desc">Acompanhe todas as suas consultas desde o primeiro dia. Seu diário espiritual digital.</p>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- SCREENSHOTS -->
+<section class="screenshots">
+  <div class="screenshots-inner">
+    <div class="section-header">
+      <p class="section-eyebrow">✦ DESIGN ✦</p>
+      <h2 class="section-title">Veja o app em ação</h2>
+      <p class="section-sub">Elegante, intuitivo e feito para a tradição</p>
+    </div>
+    <div class="screens-row">
+      <div class="screen-wrap"><img src="ss1.jpg" alt="Tela inicial Ifaseun"></div>
+      <div class="screen-wrap"><img src="ss2.jpg" alt="Odù do Dia"></div>
+      <div class="screen-wrap"><img src="ss3.jpg" alt="Lista de Odùs"></div>
+      <div class="screen-wrap"><img src="ss4.jpg" alt="Simulador"></div>
+      <div class="screen-wrap"><img src="ss5.jpg" alt="Odù completo"></div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- PRICING -->
+<section class="pricing" id="download">
+  <div class="section-header">
+    <p class="section-eyebrow">✦ ACESSO COMPLETO ✦</p>
+    <h2 class="section-title">Simples e sem surpresas</h2>
+  </div>
+
+  <div class="price-card">
+    <div class="price-badge">PAGAMENTO ÚNICO</div>
+    <p class="price-trial">✦ Experimente grátis por 16 dias</p>
+    <div class="price-amount">R$ 97,99</div>
+    <p class="price-period">ACESSO VITALÍCIO</p>
+
+    <ul class="price-list">
+      <li>Todos os 256 Odùs completos</li>
+      <li>Odù do Dia — atualizado diariamente</li>
+      <li>Simulador de consulta tradicional</li>
+      <li>Modo Treino para memorização</li>
+      <li>Histórico ilimitado de consultas</li>
+      <li>Favoritos e anotações</li>
+      <li>Atualizações gratuitas para sempre</li>
+    </ul>
+
+    <a href="https://play.google.com/store/apps/details?id=com.ifaseun" class="btn-primary" style="width:100%; justify-content:center; font-size:14px;">
+      ⬇ &nbsp; Baixar na Play Store
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-symbol">✦ ❖ ✦</span>
+  <p class="footer-logo">IFASEUN</p>
+  <p class="footer-sub">Oráculo de Ifá</p>
+  <div class="footer-links">
+    <a href="https://sites.google.com/view/ifaseun-poltica-de-privacidade/início">Política de Privacidade</a>
+    <a href="mailto:ifaseun.oraculo@gmail.com">Contato</a>
+    <a href="https://play.google.com/store/apps/details?id=com.ifaseun">Play Store</a>
+  </div>
+  <p class="footer-copy">© 2026 Ifaseun · Conhecimento ancestral na palma da mão</p>
+</footer>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx - 4 + 'px'; cursor.style.top = my - 4 + 'px'; });
+function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; ring.style.left = rx - 16 + 'px'; ring.style.top = ry - 16 + 'px'; requestAnimationFrame(animRing); }
+animRing();
+document.querySelectorAll('a, button').forEach(el => { el.addEventListener('mouseenter', () => { ring.style.transform = 'scale(1.8)'; ring.style.borderColor = 'rgba(255,217,125,0.6)'; }); el.addEventListener('mouseleave', () => { ring.style.transform = 'scale(1)'; ring.style.borderColor = 'rgba(230,192,104,0.4)'; }); });
+
+// PARTÍCULAS
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = canvas.height + 10;
+    this.size = Math.random() * 2 + 0.3;
+    this.speedY = -(Math.random() * 0.9 + 0.2);
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.opacity = 0;
+    this.maxOpacity = Math.random() * 0.6 + 0.1;
+    this.life = 0;
+    this.maxLife = Math.random() * 250 + 100;
+    this.gold = Math.random() > 0.5;
+  }
+  update() {
+    this.life++;
+    this.y += this.speedY;
+    this.x += this.speedX;
+    if (this.life < 40) this.opacity = (this.life / 40) * this.maxOpacity;
+    else if (this.life > this.maxLife - 40) this.opacity = ((this.maxLife - this.life) / 40) * this.maxOpacity;
+    else this.opacity = this.maxOpacity;
+    if (this.life >= this.maxLife) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.gold ? '#FFD97D' : '#E6C068';
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = '#C9A227';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+const particles = [];
+for (let i = 0; i < 80; i++) {
+  const p = new Particle();
+  p.life = Math.random() * p.maxLife;
+  p.y = Math.random() * canvas.height;
+  particles.push(p);
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// SCROLL REVEAL
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feature-card').forEach(el => observer.observe(el));
+
+// ODU SYMBOL TROCA
+const odusLeft = [['I','I','I','I'],['II','II','II','II'],['II','I','I','II'],['I','II','II','I']];
+const odusRight = [['I','I','I','I'],['I','II','II','I'],['II','II','I','I'],['I','I','II','II']];
+let idx = 0;
+const cols = document.querySelectorAll('.odu-col');
+
+setInterval(() => {
+  idx = (idx + 1) % odusLeft.length;
+  if (cols[0]) cols[0].querySelectorAll('.odu-line').forEach((l, i) => { l.style.opacity = '0'; setTimeout(() => { l.textContent = odusLeft[idx][i]; l.style.opacity = '1'; }, 300); });
+  if (cols[1]) cols[1].querySelectorAll('.odu-line').forEach((l, i) => { l.style.opacity = '0'; setTimeout(() => { l.textContent = odusRight[idx][i]; l.style.opacity = '1'; }, 300); });
+}, 3000);
+
+document.querySelectorAll('.odu-line').forEach(l => { l.style.transition = 'opacity 0.3s ease'; });
+</script>
+</body>
+</html>
